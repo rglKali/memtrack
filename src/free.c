@@ -30,7 +30,7 @@ void _memtrack_free_f(char * file, const char * func, int line, void * ptr) {
     }
 
     // Search for the pointer in the storage
-    for (size_t i = _memtrack_env_c.size - 1; i >= 0; i--) {
+    for (size_t i = 0; i <_memtrack_env_c.size; i++) {
         if (_memtrack_env_c.chunks[i].address == ptr) {
 
             // Check if the address is in use

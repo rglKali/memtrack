@@ -19,16 +19,16 @@ void * _memtrack_realloc_f(char * file, const char * func, int line, void * ptr,
     // Increase the calls counter
     _memtrack_env_c.calls++;
 
-    // Reallocate the memory
-    void * tmp = realloc(ptr, size);
-    if (ptr == NULL) {
-        fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> NULL | CRITICAL: System error\033[0m\n",
-                    _memtrack_env_c.calls, file, func, line, ptr, size);
-        exit(1);
-    }
-
     // Check if the pointer is NULL
     if (ptr == NULL) {
+
+        // Reallocate the memory
+        void * tmp = malloc(size);
+        if (tmp == NULL) {
+            fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> NULL | CRITICAL: System error\033[0m\n",
+                        _memtrack_env_c.calls, file, func, line, ptr, size);
+            exit(1);
+        }
 
         // Print the warning
         fprintf(stderr, "\033[1;33m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(NULL, %lu) -> %p | WARNING: empty realloc\033[0m\n",
@@ -48,25 +48,38 @@ void * _memtrack_realloc_f(char * file, const char * func, int line, void * ptr,
             // Check if the address is in use
             if (_memtrack_env_c.chunks[i].used) {
 
-                // Print the info message
-                fprintf(stderr, "\033[1;32m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> %p\033[0m\n",
-                        i+1, file, func, line, ptr, size, tmp);
+                // Reallocate the memory
+                void * tmp = realloc(ptr, size);
+                if (ptr == NULL) {
+                    fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> NULL | CRITICAL: System error\033[0m\n",
+                                _memtrack_env_c.calls, file, func, line, ptr, size);
+                    exit(1);
+                }
 
-                // Update the memory cell
-                _memtrack_env_c.chunks[i].address = tmp;
-                _memtrack_env_c.chunks[i].size = size;
+                // Mark cell as not used anymore
+                _memtrack_env_c.chunks[i].used = false;
 
+                // Print warning if size is 0
+                if (size == 0) 
+                    fprintf(stderr, "\033[1;33m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> %p | WARNING: Zero memory reallocation \033[0m\n",
+                        _memtrack_env_c.calls, file, func, line, ptr, size, tmp);
+                else {
+                    // Append the new cell to the storage
+                    _memtrack_append_f(tmp, size);
+                    
+                    // Print the common info message otherwise
+                    fprintf(stderr, "\033[1;32m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> %p\033[0m\n",
+                        _memtrack_env_c.calls, file, func, line, ptr, size, tmp);
+                }   
+                    
                 // Return the new pointer
                 return tmp;
             }
-
-            // Print the error message
-            fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> %p | ERROR: double memory free\033[0m\n",
-                    i+1, file, func, line, ptr, size, tmp);
-
-            // Return the new pointer
-            return tmp;
         }
     }
 
+    // Actually, we shouldn't be here, if we reallocate the valid non-null ptr, so just throw an error
+    fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> NULL | ERROR: invalid pointer\033[0m\n",
+            _memtrack_env_c.size, file, func, line, ptr, size);
+    return NULL;
 }

@@ -29,7 +29,13 @@ void _memtrack_release_f() {
         }
 
         // Print the missing free warning
-        fprintf(stderr, "\033[1;31mMissing free(%p) -> %lub lost\033[0m\n", _memtrack_env_c.chunks[i].address, _memtrack_env_c.chunks[i].size);
+        if (_memtrack_env_c.chunks[i].size == 0)
+            fprintf(stderr, "\033[1;33mMissing free(%p) -> Zero lost\033[0m\n", 
+            _memtrack_env_c.chunks[i].address);
+        // Print the missing free warning
+        else
+            fprintf(stderr, "\033[1;31mMissing free(%p) -> %lub lost\033[0m\n", 
+            _memtrack_env_c.chunks[i].address, _memtrack_env_c.chunks[i].size);
 
         // Free the memory
         free(_memtrack_env_c.chunks[i].address);
