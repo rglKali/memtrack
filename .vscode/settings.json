@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "stddef.h": "c",
+        "stdlib.h": "c",
+        "stdbool.h": "c",
+        "track_03.h": "c"
+    }
+}
