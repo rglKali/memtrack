@@ -13,7 +13,7 @@ void _memtrack_release_f() {
     size_t unreleased = 0, released = 0;
 
     // Print the header
-    fprintf(stderr, "\033[1;39m=== result tracker [v5] ===\033[0m\n");
+    fprintf(stderr, "\033[1;39m=== result tracker ===\033[0m\n");
 
     // Iterate over the chunks
     for (size_t i = 0; i < _memtrack_env_c.size; i++) {
@@ -45,9 +45,9 @@ void _memtrack_release_f() {
     }
 
     // Print the summary
-    fprintf(stderr, "\033[1;39mTotal bytes allocated: %lub\033[0m\n", unreleased + released);
-    fprintf(stderr, "\033[1;39mTotal bytes released: %lub\033[0m\n", released);
-    fprintf(stderr, "\033[1;39mTotal bytes forgotten: %lub\033[0m\n", unreleased);
+    fprintf(stderr, "\033[1;39mTotal bytes allocated: \033[1;34m%lub\033[0m\n", unreleased + released);
+    fprintf(stderr, "\033[1;39mTotal bytes released: \033[1;32m%lub\033[0m\n", released);
+    fprintf(stderr, "\033[1;39mTotal bytes forgotten: \033[1;31m%lub\033[0m\n", unreleased);
 
     // Free the chunks
     free(_memtrack_env_c.chunks);

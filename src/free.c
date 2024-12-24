@@ -29,6 +29,9 @@ void _memtrack_free_f(char * file, const char * func, int line, void * ptr) {
         return;
     }
 
+    // Hold the status of the double free
+    bool double_free = false;
+
     // Search for the pointer in the storage
     for (size_t i = 0; i <_memtrack_env_c.size; i++) {
         if (_memtrack_env_c.chunks[i].address == ptr) {
@@ -38,7 +41,7 @@ void _memtrack_free_f(char * file, const char * func, int line, void * ptr) {
 
                 // Print the info message
                 fprintf(stderr, "\033[1;32m[Call #%03lu] file<%s> | function<%s> | line<%d> | free(%p)\033[0m\n",
-                        i+1, file, func, line, ptr);
+                        _memtrack_env_c.calls, file, func, line, ptr);
 
                 // Mark the memory as free
                 _memtrack_env_c.chunks[i].used = false;
@@ -50,18 +53,23 @@ void _memtrack_free_f(char * file, const char * func, int line, void * ptr) {
                 return;
             }
 
-            // Print the error message
-            fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | free(%p) | ERROR: double memory free\033[0m\n",
-                    i+1, file, func, line, ptr);
-
-            // Return
-            return;
+            double_free = true;
         }
+    }
+
+    // Check if we're trying to free the memory twice
+    if (double_free) {
+        // Print the error message
+        fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | free(%p) | ERROR: double memory free\033[0m\n",
+                _memtrack_env_c.calls, file, func, line, ptr);
+
+        // Return
+        return;
     }
 
     // Print the error message
     fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | free(%p) | ERROR: invalid pointer\033[0m\n",
-            _memtrack_env_c.size, file, func, line, ptr);
+            _memtrack_env_c.calls, file, func, line, ptr);
 
     // Return
     return;

@@ -16,6 +16,9 @@ void * _memtrack_malloc_f(char * file, const char * func, int line, size_t size)
     // Check if the environment is initialized
     if (!_memtrack_env_c.initialized) _memtrack_setup_f();
 
+    // Increase the calls counter
+    _memtrack_env_c.calls++;
+
     // Allocate the memory
     void * ptr = malloc(size);
     if (ptr == NULL) {
@@ -38,5 +41,4 @@ void * _memtrack_malloc_f(char * file, const char * func, int line, size_t size)
 
     // Return the pointer
     return ptr;
-
 }

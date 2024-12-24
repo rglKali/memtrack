@@ -5,6 +5,7 @@
 
 // Extern the global placeholder
 extern _memtrack_env_t _memtrack_env_c;
+void _memtrack_extend_f();
 
 // Function to extend the array of memory cells
 void _memtrack_append_f(void * address, size_t size) {
@@ -15,4 +16,8 @@ void _memtrack_append_f(void * address, size_t size) {
 
     // Increase the array size
     _memtrack_env_c.size++;
+
+    // Increase the size of the array, if needed
+    if (_memtrack_env_c.size == _memtrack_env_c.capacity)
+        _memtrack_extend_f();
 }

@@ -3,3 +3,6 @@
 
 # Compiled dynamic libraries
 *.so
+
+# Build dir for tests
+tests/build

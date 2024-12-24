@@ -38,5 +38,5 @@ void _memtrack_setup_f() {
     _memtrack_env_c.initialized = true;
 
     // Print the activation message
-    fprintf(stderr, "\033[1;39m=== activate tracker [v5] ===\033[0m\n");
+    fprintf(stderr, "\033[1;39m=== activate tracker ===\033[0m\n");
 }

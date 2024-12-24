@@ -80,6 +80,6 @@ void * _memtrack_realloc_f(char * file, const char * func, int line, void * ptr,
 
     // Actually, we shouldn't be here, if we reallocate the valid non-null ptr, so just throw an error
     fprintf(stderr, "\033[1;31m[Call #%03lu] file<%s> | function<%s> | line<%d> | realloc(%p, %lu) -> NULL | ERROR: invalid pointer\033[0m\n",
-            _memtrack_env_c.size, file, func, line, ptr, size);
+            _memtrack_env_c.calls, file, func, line, ptr, size);
     return NULL;
 }

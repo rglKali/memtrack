@@ -16,6 +16,9 @@ void * _memtrack_calloc_f(char * file, const char * func, int line, size_t nmemb
     // Check if the environment is initialized
     if (!_memtrack_env_c.initialized) _memtrack_setup_f();
 
+    // Increase the calls counter
+    _memtrack_env_c.calls++;
+
     // Allocate the memory
     void * ptr = calloc(nmemb, size);
     if (ptr == NULL) {
