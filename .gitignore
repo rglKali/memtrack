@@ -6,3 +6,6 @@
 
 # Build dir for tests
 tests/build
+
+# Zip archives
+*.zip

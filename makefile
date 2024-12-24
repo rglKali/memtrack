@@ -65,4 +65,9 @@ clean:
 # Rule to clean library & objects
 cleanall:
 	@echo "\033[1;33mCleaning shared library & build artifacts\033[0m"
-	@rm -rf $(OBJ) $(LIB) $(TEST)/build
+	@rm -rf $(OBJ) $(LIB) $(TEST)/build memtrack.zip
+
+# Rule to generate the zip archive
+zip:
+	@echo "\033[1;33mCreating the zip archive\033[0m"
+	@zip -r memtrack.zip include src tests makefile README.md -x tests/build/*
